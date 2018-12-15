@@ -4,7 +4,7 @@ from apscheduler.executors.pool import ThreadPoolExecutor
 
 
 class Config(object):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess'
+    SECRET_KEY = os.getenv('STARS_SECRET_KEY') or 'hard to guess'
 
     # 管理员邮箱
     STARS_TASK_ADMIN = 'xupengfei08@163.com'
@@ -18,7 +18,7 @@ class Config(object):
     MAIL_USE_TLS = False
     # 发送验证的邮箱信息
     MAIL_USERNAME = '13770270322@163.com'
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'your email password'
+    MAIL_PASSWORD = os.getenv('STARS_MAIL_PASSWORD') or 'your email password'
     MAIL_SERVER = 'smtp.163.com'
     MAIL_PORT = 465
     # 发件人

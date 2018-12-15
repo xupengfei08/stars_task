@@ -194,7 +194,6 @@ def task_execute_records(task_id):
         flash('任务不存在')
         return redirect(url_for('core.task'))
     else:
-        name = task.name
         page = request.args.get('page', 1, type=int)
         pagination = ExecuteRecord.objects(task=task).order_by("-execute_time").paginate(
             page=page,

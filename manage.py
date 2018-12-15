@@ -6,7 +6,7 @@ from app import create_app, db
 from app.models import User, Permission
 
 # 创建app
-app = create_app(os.getenv('FLASK_ENV') or 'default')
+app = create_app(os.getenv('STARS_CONFIG') or 'default')
 manager = Manager(app)
 
 
