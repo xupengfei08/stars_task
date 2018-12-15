@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Stars-Task{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-md-7 col-md-offset-1">
+        {% if not blogs %}
+        <h3>还没有信息</h3>
+        {% else %}
+        {% for blog in blogs %}
+        <h3 class="blog-title">
+            <a href="{{ url_for('main.blog', id=blog.id) }}" target="_blank">{{ blog.title }}</a>
+        </h3>
+        {% include "_labels.html" %}
+        <div class="blog-date">{{ moment(blog.publish_date).format('YYYY年MM月DD日 HH:mm') }}</div>
+        <p class=" blog-summary">
+            {{ blog.summary }}
+        </p>
+        <ol class="list-inline">
+            <li>
+                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> {{ blog.views }}
+            </li>
+            <li>
+                <a href="{{ url_for('main.blog', id=blog.id, _anchor='comments') }}" target="_blank">
+                    <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> {{
+                    blog.comments.count() }}
+                </a>
+            </li>
+            <li>
+                <span class="glyphicon glyphicon-heart" aria-hidden="true"></span> {{ blog.favourites.count() }}
+            </li>
+        </ol>
+        <hr>
+        {% endfor %}
+        {% if pagination %}
+        <div class="pagination-index">
+            {% if label_name %}
+            {{ macros.pagination_widget(pagination, 'main.index', label_name=label_name) }}
+            {% else %}
+            {{ macros.pagination_widget(pagination, 'main.index') }}
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

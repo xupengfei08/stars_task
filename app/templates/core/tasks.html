@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block page_title %}任务列表{% endblock %}
+{% block page_content %}
+<div class="page-header">
+    <div class="row">
+        <div class="col-md-4">
+            <h3>任务列表</h3>
+        </div>
+        <div class="col-md-8 text-right">
+            {% if current_user.is_administrator() %}
+            <a class="btn btn-primary" href="{{ url_for('core.add_task') }}" role="button">新增任务</a>
+            {%endif %}
+        </div>
+    </div>
+</div>
+<div class="col-md-12">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+        <tr>
+            <th class="col-md-2">名称</th>
+            <th class="col-md-1">状态</th>
+            <th class="col-md-1">类型</th>
+            <th class="col-md-1">执行时间</th>
+            <th class="col-md-2">下次执行</th>
+            <th class="col-md-2">创建时间</th>
+            <th class="col-md-3">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for task in tasks %}
+        <tr class="text-center">
+            <td>{{ task.name }}</td>
+            <td>
+                {% if task.job %}
+                {% if task.job.next_run_time %}
+                <span class="label label-success">运行中</span>
+                {% else %}
+                <span class="label label-warning">暂停中</span>
+                {% endif %}
+                {% else %}
+                <span class="label label-default">未启动</span>
+                {% endif %}
+            </td>
+            <td>{{ task.trigger }}</td>
+            <td>{{ task.time }}</td>
+            <td>
+                {% if task.job.next_run_time %}
+                {{ moment(task.job.next_run_time).format('YYYY-MM-DD hh:mm:ss') }}
+                {% endif %}
+            </td>
+            <td>{{ moment(task.create_time).format('YYYY-MM-DD hh:mm:ss') }}</td>
+            <td class="col-md-12" id="{{ task.id }}">
+                <div class="col-md-8 text-left">
+                    <a class="btn btn-info btn-xs" href="{{ url_for('core.task_execute_records', task_id=task.id) }}">执行记录</a>
+                    {% if task.job %}
+                    {% if task.job.next_run_time %}
+                    <a class="btn btn-warning btn-xs" onclick="change_task_status('pause', '{{ task.id }}')">暂停</a>
+                    {% else %}
+                    <a class="btn btn-success btn-xs" onclick="change_task_status('run', '{{ task.id }}')">运行</a>
+                    {% endif %}
+                    {% else %}
+                        <a class="btn btn-primary btn-xs" onclick="change_task_status('add', '{{ task.id }}')">启动</a>
+                    {% endif %}
+                </div>
+                {% if current_user.is_administrator() %}
+                <div class="col-md-4 text-right">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            更多
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('core.update_task', id=task.id) }}">修改</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a onclick="change_task_status('stop', '{{ task.id }}')">停止</a></li>
+                        </ul>
+                    </div>
+                </div>
+                {%endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if pagination %}
+    <div class="col-md-8 col-md-offset-2 pagination-comment">
+        {{ macros.pagination_widget(pagination, 'core.tasks') }}
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    change_task_status = function(status, id) {
+            console.log('切换任务状态：', status, id);
+        $.post('/core/task/' + status + '/' + id).done(function (data) {
+            console.log('切换任务状态：', data);
+            location.reload();
+        })
+    }
+</script>
+{% endblock %}

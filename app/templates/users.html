@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block page_title %}用户管理{% endblock %}
+{% block page_content %}
+<div class="col-md-12">
+    {% if users %}
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th class="th-left">头像</th>
+            <th class="th-left">名称</th>
+            <th class="th-left">注册邮箱</th>
+            <th class="th-left">注册日期</th>
+            <th class="th-left">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+        <tr>
+            <td><img class="im" src="{{ user.gravatar(size=20) }}"></td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ moment(user.create_time).format('YYYY-MM-DD hh:mm:ss') }}</td>
+            <td id="{{ user.id }}">
+                <a class="btn btn-success btn-xs"
+                   onclick=change_permission({{ user.id }})>确定</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if pagination %}
+    <div class="col-md-8 col-md-offset-2 pagination-comment">
+        {{ macros.pagination_widget(pagination, 'manage.manage_users') }}
+    </div>
+    {% endif %}
+    {% else %}
+    <h3>还没有用户哦<a href="{{ url_for('main.index') }}">点我返回主页</a></h3>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    change_permission = function (id) {
+        {#var td = $('#' + id);
+        var cb1 = td.find('.cb1').is(':checked');
+        var cb2 = td.find('.cb2').is(':checked');
+        $.get('/manage/permission/change', {
+            id: id,
+            favourite: cb1 ? 1 : 0,
+            comment: cb2 ? 1 : 0
+        }).done(function (data) {
+            alert("权限配置成功");
+        })#}
+    }
+</script>
+{% endblock %}

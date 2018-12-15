@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block page_title %}任务执行记录{% endblock %}
+{% block page_content %}
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ task.name }} - 执行记录</h3>
+        </div>
+        <div class="panel-body">
+            <div class="col-sm-4">
+                <label class="col-sm-4 control-label">任务简述：</label>
+                <div class="col-sm-8">
+                    <p class="text-muted">{{ task.desc }}</p>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="row">
+                    <label class="col-sm-2 control-label">任务类型：</label>
+                    <div class="col-sm-10">
+                        <p class="text-muted">{{ task.trigger }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-2 control-label">触发时间：</label>
+                    <div class="col-sm-10">
+                        <p class="text-muted">{{ task.time }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-2 control-label">请求地址：</label>
+                    <div class="col-sm-10">
+                        <p class="text-muted">{{ task.url }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-2 control-label">请求方法：</label>
+                    <div class="col-sm-10">
+                        <p class="text-muted">{{ task.method }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table table-bordered table-striped" style="table-layout:fixed">
+            <thead>
+            <tr>
+                <th class="th-left col-md-2">执行时间</th>
+                <th class="th-left col-md-1">执行状态</th>
+                <th class="th-left col-md-9">执行结果</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ moment(record.execute_time).format('YYYY-MM-DD hh:mm:ss') }}</td>
+                <td>{% if record.status %}
+                    <span class="label label-success">成功</span>
+                {% else %}
+                    <span class="label label-warning">失败</span>
+                {% endif %}
+                </td>
+                <td style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{ record.result }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if pagination %}
+    <div class="col-md-8 col-md-offset-2">
+        {{ macros.pagination_widget(pagination, 'core.task_execute_records', task_id=task.id) }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

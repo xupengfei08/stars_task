@@ -1,0 +1,38 @@
+{% extends "common_base.html" %}
+
+{% block navbar %}
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">Stars-Task</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('core.tasks') }}">定时任务</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <img class="img-circle" src="{{ current_user.gravatar(size=22) }} ">
+                        {{ current_user.name }} <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% if current_user.is_administrator() %}
+                        <li><a href="{{ url_for('main.users') }}">用户管理</a></li>
+                        <li role="separator" class="divider"></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('main.user', name=current_user.name) }}">个人信息</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{{ url_for('auth.change_password') }}">修改密码</a></li>
+                        <li><a href="{{ url_for('auth.logout') }}">退出登录</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}">登录</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
